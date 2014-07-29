@@ -21,6 +21,7 @@ BuildRequires: openssl-devel
 BuildRequires: libstdc++-devel
 BuildRequires: zlib-devel
 BuildRequires: gzip
+BuildRequires: svn
 
 %if "%{_dist_ver}" == ".el5"
 # require EPEL
@@ -87,11 +88,16 @@ if [ -z %{_node_arch} ];then
   exit 1
 fi
 
+svn checkout --force --revision 214189 \
+   http://src.chromium.org/svn/trunk/deps/third_party/icu46 \
+   deps/v8/third_party/icu46
+
 ./configure \
     --shared-openssl \
     --shared-openssl-includes=%{_includedir} \
     --shared-zlib \
-    --shared-zlib-includes=%{_includedir}
+    --shared-zlib-includes=%{_includedir} \
+    --with-icu-path=deps/v8/third_party/icu46/icu.gyp
 make binary %{?_smp_mflags}
 
 pushd $RPM_SOURCE_DIR
